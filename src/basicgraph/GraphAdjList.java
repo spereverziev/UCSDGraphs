@@ -100,9 +100,8 @@ public class GraphAdjList extends Graph {
     public List<Integer> getDistance2(int v) {
         List<Integer> result = new ArrayList<>();
         for (Integer vertex : adjListsMap.get(v)) {
-            ArrayList<Integer> twoHops = adjListsMap.get(vertex);
-            if (twoHops.get(0) != null) {
-                result.add(twoHops.get(0));
+            for(Integer twoHopsV : adjListsMap.get(vertex)) {
+                    result.add(twoHopsV);
             }
         }
 
