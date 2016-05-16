@@ -129,7 +129,7 @@ public class GraphAdjMatrix extends Graph {
 
         List<Integer> twoHop = new ArrayList<Integer>();
         for (int i = 0; i < getNumVertices(); i++) {
-            for (int j = 0; j < multiplied[i][v]; j++) {
+            for (int j = 0; j < multiplied[v][i]; j++) {
                 twoHop.add(i);
             }
         }
