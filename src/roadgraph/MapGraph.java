@@ -6,7 +6,6 @@
  */
 package roadgraph;
 
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +19,6 @@ import java.util.function.Consumer;
 
 import geography.GeographicPoint;
 import util.GraphLoader;
-import week2example.MazeNode;
 
 /**
  * @author UCSD MOOC development team and YOU
@@ -294,10 +292,12 @@ public class MapGraph {
         MapNode mapNode = nodes.get(start);
         distances.put(mapNode,0.0);
         toExplore.add(mapNode);
+        int vertexesVisited = 0;
         boolean found = false;
         while (!toExplore.isEmpty()) {
             MapNode curr = toExplore.remove();
             nodeSearched.accept(curr.getLocation());
+            vertexesVisited++;
             if(!visitedNodes.contains(curr)) {
                 visitedNodes.add(curr);
 
@@ -320,6 +320,7 @@ public class MapGraph {
                 }
             }
         }
+        System.out.println("Vertex visited: " + vertexesVisited);
         return found;
     }
 
@@ -385,28 +386,28 @@ public class MapGraph {
 
 
     public static void main(String[] args) {
-        System.out.print("Making a new map...");
-        MapGraph theMap = new MapGraph();
-        System.out.print("DONE. \nLoading the map...");
-        GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
-        System.out.println("DONE.");
-
-        GeographicPoint start = new GeographicPoint(1, 1);
-        GeographicPoint end = new GeographicPoint(8, -1);
+//        System.out.print("Making a new map...");
+//        MapGraph theMap = new MapGraph();
+//        System.out.print("DONE. \nLoading the map...");
+//        GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
+//        System.out.println("DONE.");
+//
+//        GeographicPoint start = new GeographicPoint(1, 1);
+//        GeographicPoint end = new GeographicPoint(8, -1);
 
         // You can use this method for testing.
 
 //		Use this code in Week 3 End of Week Quiz
-//		MapGraph theMap = new MapGraph();
-//		System.out.print("DONE. \nLoading the map...");
-//		GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
-//		System.out.println("DONE.");
+		MapGraph theMap = new MapGraph();
+		System.out.print("DONE. \nLoading the map...");
+		GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
+		System.out.println("DONE.");
 
-//		GeographicPoint start = new GeographicPoint(32.8648772, -117.2254046);
-//		GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
+		GeographicPoint start = new GeographicPoint(32.8648772, -117.2254046);
+		GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
 
 
-//		List<GeographicPoint> route = theMap.dijkstra(start,end);
+		List<GeographicPoint> route = theMap.dijkstra(start,end);
 		List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
 
 
