@@ -17,6 +17,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import cache.LFUCache;
 import geography.GeographicPoint;
 import util.GraphLoader;
 
@@ -34,7 +35,7 @@ public class MapGraph {
 
     private Map<MapNode, Double> distances;
 
-    private Map<SearchDirection, List<GeographicPoint>> cachedDirections;
+    private LFUCache<SearchDirection, List<GeographicPoint>> cachedDirections;
 
     private int numberOfEdges;
     /**
@@ -43,7 +44,7 @@ public class MapGraph {
     public MapGraph() {
         nodes = new HashMap<>();
         distances = new HashMap<>();
-        cachedDirections = new HashMap<>();
+        cachedDirections = new LFUCache<>(5, 0.9f);
         numberOfEdges = 0;
         // TODO: Implement in this constructor in WEEK 2
     }
