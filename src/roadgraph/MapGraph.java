@@ -34,6 +34,8 @@ public class MapGraph {
 
     private Map<MapNode, Double> distances;
 
+    private Map<SearchDirection, List<GeographicPoint>> cachedDirections;
+
     private int numberOfEdges;
     /**
      * Create a new empty MapGraph
@@ -41,6 +43,7 @@ public class MapGraph {
     public MapGraph() {
         nodes = new HashMap<>();
         distances = new HashMap<>();
+        cachedDirections = new HashMap<>();
         numberOfEdges = 0;
         // TODO: Implement in this constructor in WEEK 2
     }
@@ -87,7 +90,9 @@ public class MapGraph {
         }
 
         if(nodes.get(location) == null) {
-            nodes.put(location, new MapNode(location));
+            MapNode node = new MapNode(location);
+            nodes.put(location, node);
+            distances.put(node, Double.POSITIVE_INFINITY);
             return true;
         }
 
@@ -251,6 +256,12 @@ public class MapGraph {
             return new LinkedList<>();
         }
 
+        List<GeographicPoint> cachedPath = cachedDirections.get(new SearchDirection(start, goal));
+        if (cachedPath != null) {
+            System.out.println("Found cached path. Immediately return the path.");
+            return cachedPath;
+        }
+
         Map<MapNode, MapNode> parentNodes = new HashMap<>();
 
 
@@ -260,7 +271,10 @@ public class MapGraph {
             return null;
         }
 
-        return constructPath(startNode, goalNode, parentNodes);
+        List<GeographicPoint> path = constructPath(startNode, goalNode, parentNodes);
+        cachedDirections.put(new SearchDirection(start, goal), path);
+
+        return path;
     }
 
     private boolean dijkstraSearch(GeographicPoint start,
@@ -275,19 +289,13 @@ public class MapGraph {
             return distances.get(node1) > distances.get(node2) ? 1 : -1;
         };
 
-        boolean found = searchWithComparator(start, goal, nodeSearched, parentNodes, dijkstraComparator);
-
-        return found;
+        return searchWithComparator(start, goal, nodeSearched, parentNodes, dijkstraComparator);
     }
 
     private boolean searchWithComparator(GeographicPoint start, GeographicPoint goal,
                                          Consumer<GeographicPoint> nodeSearched, Map<MapNode, MapNode> parentNodes,
                                          Comparator<MapNode> comparator) {
-        for (MapNode node : nodes.values()) {
-            distances.put(node, Double.POSITIVE_INFINITY);
-        }
         Queue<MapNode> toExplore = new PriorityQueue<>(comparator);
-
         Set<MapNode> visitedNodes = new HashSet<>();
         MapNode mapNode = nodes.get(start);
         distances.put(mapNode,0.0);
@@ -320,8 +328,15 @@ public class MapGraph {
                 }
             }
         }
+        resetDistanceToVisitedVertexes(visitedNodes);
         System.out.println("Vertex visited: " + vertexesVisited);
         return found;
+    }
+
+    private void resetDistanceToVisitedVertexes(Set<MapNode> visitedNodes) {
+        for (MapNode node : visitedNodes) {
+            distances.put(node, Double.POSITIVE_INFINITY);
+        }
     }
 
     /** Find the path from start to goal using A-Star search
@@ -349,7 +364,6 @@ public class MapGraph {
     public List<GeographicPoint> aStarSearch(GeographicPoint start,
                                              GeographicPoint goal, Consumer<GeographicPoint> nodeSearched) {
         // TODO: Implement this method in WEEK 3
-
         MapNode startNode = nodes.get(start);
         MapNode goalNode = nodes.get(goal);
 
@@ -358,8 +372,13 @@ public class MapGraph {
             return new LinkedList<>();
         }
 
-        Map<MapNode, MapNode> parentNodes = new HashMap<>();
+        List<GeographicPoint> cachedPath = cachedDirections.get(new SearchDirection(start, goal));
+        if (cachedPath != null) {
+            System.out.println("Found cached path. Immediately return the path.");
+            return cachedPath;
+        }
 
+        Map<MapNode, MapNode> parentNodes = new HashMap<>();
 
         boolean found = aStarSearch(start, goal, nodeSearched, parentNodes);
         if (!found) {
@@ -367,7 +386,9 @@ public class MapGraph {
             return null;
         }
 
-        return constructPath(startNode, goalNode, parentNodes);
+        List<GeographicPoint> path = constructPath(startNode, goalNode, parentNodes);
+        cachedDirections.put(new SearchDirection(start, goal), path);
+        return path;
     }
 
     private boolean aStarSearch(GeographicPoint start, GeographicPoint goal, Consumer<GeographicPoint> nodeSearched, Map<MapNode, MapNode> parentNodes) {
@@ -407,8 +428,10 @@ public class MapGraph {
 		GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
 
 
-		List<GeographicPoint> route = theMap.dijkstra(start,end);
-		List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
+                    List<GeographicPoint> route3 = theMap.aStarSearch(start,end);
+                    List<GeographicPoint> route = theMap.dijkstra(start,end);
+                    List<GeographicPoint> route2 = theMap.dijkstra(start,end);
+		List<GeographicPoint> route4 = theMap.aStarSearch(start,end);
 
 
 
