@@ -370,7 +370,6 @@ public class MapGraph {
     }
 
     private boolean aStarSearch(GeographicPoint start, GeographicPoint goal, Consumer<GeographicPoint> nodeSearched, Map<MapNode, MapNode> parentNodes) {
-        double distanceBetweenStartAndGoal = start.distance(goal);
         Comparator<MapNode> aStarComparator = (node1, node2) -> {
             Double distanceForNode1 = distances.get(node1) + goal.distance(node1.getLocation());
             Double distanceForNode2 = distances.get(node2) + goal.distance(node2.getLocation());
